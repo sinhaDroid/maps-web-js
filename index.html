@@ -123,7 +123,7 @@
         <div id="mapModal" class="modal fade" id="new-loc-map" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
-                    <form id="new-loc-frm" action="" method="post">
+                    <form id="new-loc-frm">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
@@ -143,7 +143,7 @@
                                 <input type="text" id="addr_name" name="addr_name" value="" placeholder="Eg: Bengaluru Office" />
                                 <span id="address-lbl" class="clip"></span>
                             </span>
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-primary save-btn">Save</button>
                         </div>
                     </form>
                 </div>
@@ -156,6 +156,8 @@
 
 
         <script>
+
+                var lat = "", lng = "";
         
                 function initAutocomplete() {
                     var map = new google.maps.Map(document.getElementById('new-loc-map-container'), {
@@ -216,7 +218,7 @@
                     function mapmarker(latlong, map){
                     
                             lat = latlong.lat;
-                            long = latlong.lng;
+                            lng = latlong.lng;
 
                             marker = new google.maps.Marker({
                                 position: latlong,
@@ -255,7 +257,7 @@
                                         if (status == google.maps.GeocoderStatus.OK) {
                                             
                                             lat = results[0].geometry.location.lat(),
-                                                long = results[0].geometry.location.lng(),
+                                                lng = results[0].geometry.location.lng(),
                                                 placeName = results[0].formatted_address;
 
                                             
@@ -366,6 +368,11 @@
                 }
         
                 $('#mapModal').modal('show');
+
+                $('#new-loc-frm .save-btn').on('click', function(){
+                   console.log("Lat: "+lat);
+                   console.log("Long: "+lng);
+                });
         
                 
             </script>

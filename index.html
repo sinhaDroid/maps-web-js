@@ -45,8 +45,8 @@
             display: inline;
         }
 
-        .pac-container{
-            z-index:1100;
+        .pac-container {
+            z-index: 1100;
         }
 
         .pac-card {
@@ -120,262 +120,263 @@
 </head>
 
 <body>
-        <div id="mapModal" class="modal fade" id="new-loc-map" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <form id="new-loc-frm">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            <h4 class="modal-title" id="myModalLabel">Choose the location</h4>
+    <div id="mapModal" class="modal fade" id="new-loc-map" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form id="new-loc-frm">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">Choose the location</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="map-wrapper">
+                            <div id="new-loc-map-container"></div>
                         </div>
-                        <div class="modal-body">
-                            <div class="map-wrapper">
-                                <div id="new-loc-map-container"></div>
-                            </div>
-                            <input type="hidden" id="frm-latlng" name="latlng" value="" />
-                            <input type="hidden" id="frm-address" name="address" value="" />
-                            <input type="hidden" id="lock_id" name="lock_id" value="1" />
-                        </div>
-                        <div class="modal-footer">
-                            <span class="pop-frm">
-                                <input type="text" id="addr_name" name="addr_name" value="" placeholder="Eg: Bengaluru Office" />
-                                <span id="address-lbl" class="clip"></span>
-                            </span>
-                            <button type="button" class="btn btn-primary save-btn">Save</button>
-                        </div>
-                    </form>
-                </div>
+                        <input type="hidden" id="frm-latlng" name="latlng" value="" />
+                        <input type="hidden" id="frm-address" name="address" value="" />
+                        <input type="hidden" id="lock_id" name="lock_id" value="1" />
+                    </div>
+                    <div class="modal-footer">
+                        <span class="pop-frm">
+                            <input type="text" id="addr_name" name="addr_name" value="" placeholder="Eg: Bengaluru Office" />
+                            <span id="address-lbl" class="clip"></span>
+                        </span>
+                        <button type="button" class="btn btn-primary save-btn">Save</button>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
     <!-- <input id="pac-input" class="controls" type="text" placeholder="Search Box">
     <div id="map"></div> -->
-    
-    
 
 
-        <script>
 
-                var lat = "", lng = "";
-        
-                function initAutocomplete() {
-                    var map = new google.maps.Map(document.getElementById('new-loc-map-container'), {
-                        center: {
-                            lat: -33.8688,
-                            lng: 151.2195
-                        },
-                        zoom: 19,
-                        mapTypeId: 'roadmap'
-                    });
-                    var marker = {};
-                    infoWindow = new google.maps.InfoWindow;
-        
-                    // Marker Icons
-                    var icon = {
-                        url: "images/openappmarker.png",
-                        size: new google.maps.Size(120, 350),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(17, 34),
-                        scaledSize: new google.maps.Size(25, 25)
+
+    <script>
+        var lat = "",
+            lng = "";
+
+        function initAutocomplete() {
+            var map = new google.maps.Map(document.getElementById('new-loc-map-container'), {
+                center: {
+                    lat: -33.8688,
+                    lng: 151.2195
+                },
+                zoom: 19,
+                mapTypeId: 'roadmap'
+            });
+            var marker = {};
+            infoWindow = new google.maps.InfoWindow;
+
+            // Marker Icons
+            var icon = {
+                url: "images/openappmarker.png",
+                size: new google.maps.Size(120, 350),
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(17, 34),
+                scaledSize: new google.maps.Size(25, 25)
+            };
+
+            // Create the search box and link it to the UI element.
+            var input = document.getElementById('addr_name');
+            var searchBox = new google.maps.places.SearchBox(input);
+            //map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+            // Try HTML5 geolocation.
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
                     };
-        
-                    // Create the search box and link it to the UI element.
-                    var input = document.getElementById('addr_name');
-                    var searchBox = new google.maps.places.SearchBox(input);
-                    //map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-        
-                    // Try HTML5 geolocation.
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(function (position) {
-                            var pos = {
-                                lat: position.coords.latitude,
-                                lng: position.coords.longitude
-                            };
 
-                            mapmarker(pos, map);
-                            // var bounds = new google.maps.LatLngBounds();
-                            // var currBound = new google.maps.LatLng(pos.lat, pos.lng);
-                            // bounds.extend(currBound);
-                            // infoWindow.setPosition(pos);
-                            // infoWindow.setContent('You Are Here!.');
-                            // map.setCenter(pos);
-                            // marker = new google.maps.Marker({
-                            //     position: pos,
-                            //     icon: icon,
-                            //     map: map
-                            // });
-                            // map.fitBounds(bounds);
-                            // map.setZoom(18);
-                        }, function () {
-                            handleLocationError(true, infoWindow, map.getCenter());
-                        });
-                    } else {
-                        // Browser doesn't support Geolocation
-                        handleLocationError(false, infoWindow, map.getCenter());
-                    }
-
-                    function mapmarker(latlong, map){
-                    
-                            lat = latlong.lat;
-                            lng = latlong.lng;
-
-                            marker = new google.maps.Marker({
-                                position: latlong,
-                                draggable:true,
-                                map:map,
-                                icon: icon
-                            });
-
-                            geocoder = new google.maps.Geocoder();
-
-                            geocoder.geocode({
-                                    "latLng":latlong
-                                }, function (results, status) {
-                                    
-                                    if (status == google.maps.GeocoderStatus.OK) {
-                                        
-                                        var placeName = results[0].formatted_address;
-                                        $('#addr_name').val(placeName);
-                                
-                                    }
-                            });
-
-                            marker.setMap(map);//setting marker
-                            map.setCenter(latlong);
-
-                            //on marker drag, setting location on address input box
-                            marker.addListener('drag', function(a) {
-                            
-                            var position = {lat:a.latLng.lat(), lng:a.latLng.lng()};
-                            
-                                geocoder = new google.maps.Geocoder();
-                                    geocoder.geocode({
-                                        "latLng":position
-                                    }, function (results, status) {
-                                        console.log(results, status);
-                                        if (status == google.maps.GeocoderStatus.OK) {
-                                            
-                                            lat = results[0].geometry.location.lat(),
-                                                lng = results[0].geometry.location.lng(),
-                                                placeName = results[0].formatted_address;
-
-                                            
-
-                                            $('#addr_name').val(placeName);
-                                    
-                                        }
-                                    });
-                            });//drag function ends
-                            
-                            
-                    }
-        
-        
-                    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-                        infoWindow.setPosition(pos);
-                        infoWindow.setContent(browserHasGeolocation ?
-                            'Error: The Geolocation service failed.' :
-                            'Error: Your browser doesn\'t support geolocation.');
-                        infoWindow.open(map);
-                    }
-        
-                    // Bias the SearchBox results towards current map's viewport.
-                    map.addListener('bounds_changed', function () {
-                        searchBox.setBounds(map.getBounds());
-                    });
-        
-                    var markers = [];
-                    // Listen for the event fired when the user selects a prediction and retrieve
-                    // more details for that place.
-                    searchBox.addListener('places_changed', function () {
-                        var places = searchBox.getPlaces();
-        
-                        if (places.length == 0) {
-                            return;
-                        }
-
-                        if (places[0].geometry.viewport) {
-                            map.fitBounds(places[0].geometry.viewport);
-                            map.setZoom(19);
-                        } else {
-                            map.setCenter(places[0].geometry.location);
-                            map.setZoom(8);  // Why 17? Because it looks good.
-                        }
-
-                        var latlng = {
-                            lat: places[0].geometry.location.lat(),
-                            lng: places[0].geometry.location.lng()
-                        };
-
-
-
-                        // Clear out the old markers.
-                        marker.setMap(null);
-
-                        mapmarker(latlng, map)
-        
-                        // Clear out the old markers.
-                        // markers.forEach(function (marker) {
-                        //     marker.setMap(null);
-                        // });
-                        // markers = [];
-        
-                        // // For each place, get the icon, name and location.
-                        // var bounds = new google.maps.LatLngBounds();
-                        // places.forEach(function (place) {
-                        //     if (!place.geometry) {
-                        //         console.log("Returned place contains no geometry");
-                        //         return;
-                        //     }
-
-                        //     console.log(place);
-        
-                        //     // Create a marker for each place.
-                        //     marker = new google.maps.Marker({
-                        //         map: map,
-                        //         icon: icon,
-                        //         title: place.name,
-                        //         draggable: true,
-                        //         animation: google.maps.Animation.DROP,
-                        //         position: place.geometry.location
-                        //     });
-                        //     marker.addListener('click', toggleBounce);
-
-                            
-        
-                        //     markers.push(marker);
-
-                        //     console.log(markers);
-        
-                        //     if (place.geometry.viewport) {
-                        //         // Only geocodes have viewport.
-                        //         bounds.union(place.geometry.viewport);
-                        //     } else {
-                        //         bounds.extend(place.geometry.location);
-                        //     }
-                        // });
-                        // map.fitBounds(bounds);
-                    });
-        
-                    function toggleBounce() {
-                        if (marker.getAnimation() !== null) {
-                            marker.setAnimation(null);
-                        } else {
-                            marker.setAnimation(google.maps.Animation.BOUNCE);
-                        }
-                    }
-                }
-        
-                $('#mapModal').modal('show');
-
-                $('#new-loc-frm .save-btn').on('click', function(){
-                   console.log("Lat: "+lat);
-                   console.log("Long: "+lng);
+                    mapmarker(pos, map);
+                    // var bounds = new google.maps.LatLngBounds();
+                    // var currBound = new google.maps.LatLng(pos.lat, pos.lng);
+                    // bounds.extend(currBound);
+                    // infoWindow.setPosition(pos);
+                    // infoWindow.setContent('You Are Here!.');
+                    // map.setCenter(pos);
+                    // marker = new google.maps.Marker({
+                    //     position: pos,
+                    //     icon: icon,
+                    //     map: map
+                    // });
+                    // map.fitBounds(bounds);
+                    // map.setZoom(18);
+                }, function () {
+                    handleLocationError(true, infoWindow, map.getCenter());
                 });
-        
-                
-            </script>
+            } else {
+                // Browser doesn't support Geolocation
+                handleLocationError(false, infoWindow, map.getCenter());
+            }
+
+            function mapmarker(latlong, map) {
+
+                lat = latlong.lat;
+                lng = latlong.lng;
+
+                marker = new google.maps.Marker({
+                    position: latlong,
+                    draggable: true,
+                    map: map,
+                    icon: icon
+                });
+
+                geocoder = new google.maps.Geocoder();
+
+                geocoder.geocode({
+                    "latLng": latlong
+                }, function (results, status) {
+
+                    if (status == google.maps.GeocoderStatus.OK) {
+
+                        var placeName = results[0].formatted_address;
+                        $('#addr_name').val(placeName);
+
+                    }
+                });
+
+                marker.setMap(map); //setting marker
+                map.setCenter(latlong);
+
+                //on marker drag, setting location on address input box
+                marker.addListener('drag', function (a) {
+
+                    var position = {
+                        lat: a.latLng.lat(),
+                        lng: a.latLng.lng()
+                    };
+
+                    geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({
+                        "latLng": position
+                    }, function (results, status) {
+                        console.log(results, status);
+                        if (status == google.maps.GeocoderStatus.OK) {
+
+                            lat = results[0].geometry.location.lat(),
+                                lng = results[0].geometry.location.lng(),
+                                placeName = results[0].formatted_address;
+
+
+
+                            $('#addr_name').val(placeName);
+
+                        }
+                    });
+                }); //drag function ends
+
+
+            }
+
+
+            function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+                infoWindow.setPosition(pos);
+                infoWindow.setContent(browserHasGeolocation ?
+                    'Error: The Geolocation service failed.' :
+                    'Error: Your browser doesn\'t support geolocation.');
+                infoWindow.open(map);
+            }
+
+            // Bias the SearchBox results towards current map's viewport.
+            map.addListener('bounds_changed', function () {
+                searchBox.setBounds(map.getBounds());
+            });
+
+            var markers = [];
+            // Listen for the event fired when the user selects a prediction and retrieve
+            // more details for that place.
+            searchBox.addListener('places_changed', function () {
+                var places = searchBox.getPlaces();
+
+                if (places.length == 0) {
+                    return;
+                }
+
+                if (places[0].geometry.viewport) {
+                    map.fitBounds(places[0].geometry.viewport);
+                    map.setZoom(19);
+                } else {
+                    map.setCenter(places[0].geometry.location);
+                    map.setZoom(8); // Why 17? Because it looks good.
+                }
+
+                var latlng = {
+                    lat: places[0].geometry.location.lat(),
+                    lng: places[0].geometry.location.lng()
+                };
+
+
+
+                // Clear out the old markers.
+                marker.setMap(null);
+
+                mapmarker(latlng, map)
+
+                // Clear out the old markers.
+                // markers.forEach(function (marker) {
+                //     marker.setMap(null);
+                // });
+                // markers = [];
+
+                // // For each place, get the icon, name and location.
+                // var bounds = new google.maps.LatLngBounds();
+                // places.forEach(function (place) {
+                //     if (!place.geometry) {
+                //         console.log("Returned place contains no geometry");
+                //         return;
+                //     }
+
+                //     console.log(place);
+
+                //     // Create a marker for each place.
+                //     marker = new google.maps.Marker({
+                //         map: map,
+                //         icon: icon,
+                //         title: place.name,
+                //         draggable: true,
+                //         animation: google.maps.Animation.DROP,
+                //         position: place.geometry.location
+                //     });
+                //     marker.addListener('click', toggleBounce);
+
+
+
+                //     markers.push(marker);
+
+                //     console.log(markers);
+
+                //     if (place.geometry.viewport) {
+                //         // Only geocodes have viewport.
+                //         bounds.union(place.geometry.viewport);
+                //     } else {
+                //         bounds.extend(place.geometry.location);
+                //     }
+                // });
+                // map.fitBounds(bounds);
+            });
+
+            function toggleBounce() {
+                if (marker.getAnimation() !== null) {
+                    marker.setAnimation(null);
+                } else {
+                    marker.setAnimation(google.maps.Animation.BOUNCE);
+                }
+            }
+        }
+
+        $('#mapModal').modal('show');
+
+        $('#new-loc-frm .save-btn').on('click', function () {
+            console.log("Lat: " + lat);
+            console.log("Long: " + lng);
+        });
+    </script>
 
 </body>
 

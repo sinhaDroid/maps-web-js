@@ -174,7 +174,7 @@
             // Marker Icons
             var icon = {
                 url: "images/openappmarker.png",
-                size: new google.maps.Size(120, 350),
+                size: new google.maps.Size(71, 71),
                 origin: new google.maps.Point(0, 0),
                 anchor: new google.maps.Point(17, 34),
                 scaledSize: new google.maps.Size(25, 25)
@@ -194,19 +194,7 @@
                     };
 
                     mapmarker(pos, map);
-                    // var bounds = new google.maps.LatLngBounds();
-                    // var currBound = new google.maps.LatLng(pos.lat, pos.lng);
-                    // bounds.extend(currBound);
-                    // infoWindow.setPosition(pos);
-                    // infoWindow.setContent('You Are Here!.');
-                    // map.setCenter(pos);
-                    // marker = new google.maps.Marker({
-                    //     position: pos,
-                    //     icon: icon,
-                    //     map: map
-                    // });
-                    // map.fitBounds(bounds);
-                    // map.setZoom(18);
+
                 }, function () {
                     handleLocationError(true, infoWindow, map.getCenter());
                 });
@@ -245,25 +233,23 @@
                 map.setCenter(latlong);
 
                 //on marker drag, setting location on address input box
-                marker.addListener('drag', function (a) {
+                marker.addListener('dragend', function (a) {
 
                     var position = {
                         lat: a.latLng.lat(),
                         lng: a.latLng.lng()
                     };
 
-                    geocoder = new google.maps.Geocoder();
+                    lat = position.lat;
+                    lng = position.lng;
+                    
                     geocoder.geocode({
                         "latLng": position
                     }, function (results, status) {
                         console.log(results, status);
                         if (status == google.maps.GeocoderStatus.OK) {
 
-                            lat = results[0].geometry.location.lat(),
-                                lng = results[0].geometry.location.lng(),
-                                placeName = results[0].formatted_address;
-
-
+                            placeName = results[0].formatted_address;
 
                             $('#addr_name').val(placeName);
 
@@ -271,9 +257,7 @@
                     });
                 }); //drag function ends
 
-
             }
-
 
             function handleLocationError(browserHasGeolocation, infoWindow, pos) {
                 infoWindow.setPosition(pos);
@@ -311,54 +295,10 @@
                     lng: places[0].geometry.location.lng()
                 };
 
-
-
                 // Clear out the old markers.
                 marker.setMap(null);
 
                 mapmarker(latlng, map)
-
-                // Clear out the old markers.
-                // markers.forEach(function (marker) {
-                //     marker.setMap(null);
-                // });
-                // markers = [];
-
-                // // For each place, get the icon, name and location.
-                // var bounds = new google.maps.LatLngBounds();
-                // places.forEach(function (place) {
-                //     if (!place.geometry) {
-                //         console.log("Returned place contains no geometry");
-                //         return;
-                //     }
-
-                //     console.log(place);
-
-                //     // Create a marker for each place.
-                //     marker = new google.maps.Marker({
-                //         map: map,
-                //         icon: icon,
-                //         title: place.name,
-                //         draggable: true,
-                //         animation: google.maps.Animation.DROP,
-                //         position: place.geometry.location
-                //     });
-                //     marker.addListener('click', toggleBounce);
-
-
-
-                //     markers.push(marker);
-
-                //     console.log(markers);
-
-                //     if (place.geometry.viewport) {
-                //         // Only geocodes have viewport.
-                //         bounds.union(place.geometry.viewport);
-                //     } else {
-                //         bounds.extend(place.geometry.location);
-                //     }
-                // });
-                // map.fitBounds(bounds);
             });
 
             function toggleBounce() {
